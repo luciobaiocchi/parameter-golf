@@ -265,6 +265,9 @@ def eval_val(
             token_bytes = base_bytes_lut[tgt_ids].to(dtype=torch.int16)
             token_bytes += (has_leading_space_lut[tgt_ids] & ~is_boundary_token_lut[prev_ids]).to(dtype=torch.int16)
             val_byte_count += token_bytes.to(torch.float64).sum()
+            
+            if rank == 0 and (batch_seq_start // local_batch_seqs) % 25 == 0:
+                print(f"val_progress:{batch_seq_end}/{seq_end}", flush=True)
 
     if dist.is_available() and dist.is_initialized():
         dist.all_reduce(val_loss_sum, op=dist.ReduceOp.SUM)
