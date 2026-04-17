@@ -186,7 +186,15 @@ if __name__ == "__main__":
     parser.add_argument("--best-xsa", type=str, default="",
                         help="Comma-separated layer indices, e.g. '3,4,5'")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--only", type=str, default="",
+                        help="Comma-separated list of names to run, e.g. 'xsa_recurrent,xsa_deep'")
+    parser.add_argument("--gpus", type=int, default=1,
+                        help="Number of GPUs to use")
+
     args = parser.parse_args()
+
+    # Update gpus in the base config before generating the blocks
+    BASE_CONFIG["hardware"]["gpus"] = args.gpus
 
     best_xsa = [int(x) for x in args.best_xsa.split(",")] if args.best_xsa else list(range(11))
 
@@ -201,6 +209,12 @@ if __name__ == "__main__":
     else:
         print(f"Block {args.block} non implementato. Usa --block 1-4.")
         exit(1)
+
+    # Filter with --only
+    if args.only:
+        allowed_names = [name.strip() for name in args.only.split(",")]
+        # A run_id could be 'b1_xsa_recurrent'. We match if any of the allowed names is in the run_id.
+        configs = [c for c in configs if any(a in c.stem for a in allowed_names)]
 
     run_configs(configs, dry_run=args.dry_run)
     print(f"\nGenerated {len(configs)} configs in {CONFIG_DIR}/")
