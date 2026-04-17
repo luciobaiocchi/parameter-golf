@@ -1,0 +1,66 @@
+{
+  "architecture": {
+    "n_layers": 11,
+    "d_model": 512,
+    "n_heads": 8,
+    "n_kv_heads": 4,
+    "mlp_expansion": 4,
+    "activation": "leaky_relu_sq",
+    "leaky_slope": 0.5,
+    "rope_dims": 16,
+    "logit_softcap": 30.0
+  },
+  "xsa": {
+    "enabled": true,
+    "layers": [
+      3,
+      4,
+      5
+    ]
+  },
+  "depth_recurrence": {
+    "enabled": true,
+    "layers": [
+      3,
+      4,
+      5
+    ],
+    "activation_frac": 0.35
+  },
+  "parallel_residuals": {
+    "enabled": true,
+    "from_layer": 7
+  },
+  "training": {
+    "qk_gain_init": 5.25,
+    "weight_decay": 0.095,
+    "max_lr": 0.022,
+    "ema_decay": 0.9965,
+    "warmdown_frac": 0.72,
+    "qat_start_frac": 0.15,
+    "total_steps": 1500,
+    "seed": 42
+  },
+  "quantization": {
+    "method": "gptq_sdclip",
+    "matrix_bits": 6,
+    "matrix_clip_k": 12.85,
+    "embedding_bits": 8,
+    "embedding_clip_k": 20.0,
+    "compression": "brotli-11"
+  },
+  "ttt": {
+    "enabled": false,
+    "lr": 0.005,
+    "momentum": 0.9,
+    "epochs": 3,
+    "chunk_size": 32768
+  },
+  "hardware": {
+    "gpus": 1,
+    "gpu_type": "H100"
+  },
+  "run_id": "b1_xsa_recurrent",
+  "block": 1,
+  "description": "Block 1: xsa_recurrent"
+}
